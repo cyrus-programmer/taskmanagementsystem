@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taskmanagementsystem/controller/data_controller.dart';
-import 'package:taskmanagementsystem/routes/routes.dart';
 import 'package:taskmanagementsystem/screens/allTask.dart';
 import 'package:taskmanagementsystem/utils/app_color.dart';
 import 'package:taskmanagementsystem/widgets/button.dart';
 import 'package:taskmanagementsystem/widgets/popup_err.dart';
 import 'package:taskmanagementsystem/widgets/textField.dart';
 
-class AddTask extends StatelessWidget {
-  AddTask({Key? key}) : super(key: key);
+class EditTask extends StatelessWidget {
+  final String id;
+  EditTask({Key? key, required this.id}) : super(key: key);
+  _loadSingleTask() async {
+    await Get.find<DataController>().getTask(id);
+  }
+
   TextEditingController nameController = TextEditingController();
   TextEditingController detailController = TextEditingController();
   bool _dataValidation() {
@@ -33,8 +37,9 @@ class AddTask extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
+    _loadSingleTask();
+    return Scaffold(body: GetBuilder<DataController>(builder: (controller) {
+      return Container(
         height: double.maxFinite,
         width: double.maxFinite,
         padding: EdgeInsets.only(left: 20, right: 20),
@@ -47,10 +52,10 @@ class AddTask extends StatelessWidget {
           children: [
             Column(
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height / 24),
+                SizedBox(height: MediaQuery.of(context).size.height / 14),
                 IconButton(
                     onPressed: () {
-                      Get.offNamed(RouteClass.getHomeRoute());
+                      Get.back();
                     },
                     icon: Icon(
                       Icons.arrow_back,
@@ -73,15 +78,16 @@ class AddTask extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     if (_dataValidation()) {
-                      Get.find<DataController>().sendData(
+                      Get.find<DataController>().updateData(
                           nameController.text.trim(),
-                          detailController.text.trim());
-                      Get.offNamed(RouteClass.getAllTasks());
+                          detailController.text.trim(),
+                          controller.singleTask["id"].toString());
+                      Get.off(() => AllTask(), transition: Transition.zoom);
                     }
                   },
                   child: ButtonWidget(
                       backgroundColor: AppColor.mainColor,
-                      text: "Add",
+                      text: "Update",
                       textColor: Colors.white),
                 ),
                 SizedBox(
@@ -91,7 +97,7 @@ class AddTask extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
+      );
+    }));
   }
 }

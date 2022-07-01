@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:taskmanagementsystem/routes/routes.dart';
 import 'package:taskmanagementsystem/screens/addTask.dart';
 import 'package:taskmanagementsystem/screens/allTask.dart';
 import 'package:taskmanagementsystem/utils/app_color.dart';
@@ -39,9 +40,7 @@ class HomeScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
             child: InkWell(
               onTap: () {
-                Get.to(() => AddTask(),
-                    transition: Transition.leftToRight,
-                    duration: Duration(seconds: 1));
+                Get.toNamed(RouteClass.getAddTasks());
               },
               child: ButtonWidget(
                   backgroundColor: AppColor.mainColor,
@@ -54,9 +53,7 @@ class HomeScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
             child: InkWell(
               onTap: () {
-                Get.to(() => AllTask(),
-                    transition: Transition.rightToLeft,
-                    duration: Duration(seconds: 1));
+                Get.toNamed(RouteClass.getAllTasks());
               },
               child: ButtonWidget(
                   backgroundColor: Colors.white,

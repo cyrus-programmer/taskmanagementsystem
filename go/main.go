@@ -48,13 +48,24 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 func deleteTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("We are in server")
+	params := mux.Vars(r)
+	flag := false
+	for i, item := range tasks {
+		if item.ID == params["id"] {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			flag = true
+			return
+		}
+	}
+	if !flag {
+		json.NewEncoder(w).Encode(map[string]string{"status": "Error in deleting task"})
+	}
 }
 func getTask(w http.ResponseWriter, r *http.Request) {
-	taskID := mux.Vars(r)
+	params := mux.Vars(r)
 	flag := false
 	for i := 0; i < len(tasks); i++ {
-		if taskID["id"] == tasks[i].ID {
+		if params["id"] == tasks[i].ID {
 			json.NewEncoder(w).Encode(tasks[i])
 			flag = true
 			break
@@ -69,7 +80,24 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tasks)
 }
 func updateTask(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("We are in server")
+	params := mux.Vars(r)
+	flag := false
+	for i, item := range tasks {
+		if item.ID == params["id"] {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			var task Task
+			_ = json.NewDecoder(r.Body).Decode(&task)
+			task.ID = params["id"]
+			task.Date = time.Now().Format("01-02-2006")
+			tasks = append(tasks, task)
+			flag = true
+			json.NewEncoder(w).Encode(task)
+			return
+		}
+	}
+	if !flag {
+		json.NewEncoder(w).Encode(map[string]string{"status": "Error in updating task"})
+	}
 }
 func router() {
 	router := mux.NewRouter()
